@@ -41,6 +41,10 @@ h1 {
   min-height: 80px;
 }
 
+.player-area {
+  margin-top: 60px;
+}
+
 .opponent-area .card-stack {
   flex-direction: column-reverse;
 }
