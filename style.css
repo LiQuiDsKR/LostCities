@@ -41,11 +41,15 @@ h1 {
   min-height: 80px;
 }
 
-.player-area {
-  margin-top: 60px;
+.player-area-card {
+  margin-top: 85px;
 }
 
-.opponent-area .card-stack {
+.opponent-area-card {
+  margin-top: 70px;
+}
+
+.opponent-area-card .card-stack {
   flex-direction: column-reverse;
 }
 
