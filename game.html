@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로스트 시티</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>로스트 시티</h1>
+  <div id="turn-display" style="margin-bottom: 10px; font-weight: bold;"></div>
+
+  <!-- 상대방 영역 -->
+  <div class="board-grid opponent-area" id="opponent-expeditions"></div>
+  <div class="score-row opponent-area" id="opponent-scores"></div>
+
+  <!-- 버리는 카드 영역 -->
+  <div class="section discard-area">
+    <div class="board-grid discard-area" id="discard-piles"></div>
+    </div>
+
+  <!-- 내 영역 -->
+  <div class="board-grid player-area" id="player-expeditions"></div>
+  <div class="score-row player-area" id="player-scores"></div>
+
+  <!-- 내 손패 -->
+  <div class="hand" id="hand"></div>
+  <button id="draw-btn">카드 뽑기</button>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>

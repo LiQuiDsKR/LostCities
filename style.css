@@ -1,0 +1,121 @@
+body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 18px;
+  background-color: #fdf0d5;
+  display: inline-block;
+  padding: 6px 20px;
+  margin: 20px 0 10px;
+  border-radius: 5px;
+}
+
+.board-grid,
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(5, 80px);
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.score-row div {
+  height: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: magenta;
+}
+
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  min-height: 80px;
+}
+
+.opponent-area .card-stack {
+  flex-direction: column-reverse;
+}
+
+.card-stack .card {
+  margin-top: -60px;
+  position: relative;
+  z-index: 0;
+}
+
+.card-stack .card:nth-child(n+2) {
+  z-index: 1;
+}
+
+.card {
+  position: relative;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 90px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid black;
+}
+
+.card .corner {
+  position: absolute;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.card .corner.top-left {
+  top: 4px;
+  left: 6px;
+}
+
+.card .corner.bottom-right {
+  bottom: 4px;
+  right: 6px;
+  transform: rotate(180deg);
+}
+
+.card.red { border-color: red; color: red; }
+.card.green { border-color: green; color: green; }
+.card.gray { border-color: gray; color: gray; }
+.card.blue { border-color: blue; color: blue; }
+.card.yellow { border-color: goldenrod; color: goldenrod; }
+
+.card.invest {
+  font-style: italic;
+  background-color: #eee;
+}
+
+.card-stack.discard-zone {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  height: 100px;
+}
+
+.card-stack.red.discard-zone { background-color: #ffe5e5; }
+.card-stack.green.discard-zone { background-color: #e7ffe7; }
+.card-stack.gray.discard-zone { background-color: #eeeeee; }
+.card-stack.blue.discard-zone { background-color: #e5eeff; }
+.card-stack.yellow.discard-zone { background-color: #fff9d5; }
+
+.hand {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+
+.discard-area .card-stack .card {
+  margin-top: 0;
+}
