@@ -7,7 +7,13 @@
 </head>
 <body>
   <h1>로스트 시티</h1>
+  <div id="player-names" style="margin-bottom: 10px;">
+    <span id="opponent-name" style="font-weight: bold; color: darkred;">상대: </span> |
+    <span id="my-name" style="font-weight: bold; color: darkblue;">나: </span>
+  </div>
   <div id="turn-display" style="margin-bottom: 10px; font-weight: bold;"></div>
+  <div id="deck-count" style="margin-bottom: 10px; font-weight: bold; color: teal;">남은 카드: 0장</div>
+
 
   <!-- 상대방 영역 -->
   <div class="board-grid opponent-area-card" id="opponent-expeditions"></div>
@@ -24,6 +30,19 @@
 
   <!-- 내 손패 -->
   <div class="hand" id="hand"></div>
+  
+  <!-- 카드 선택 모달 -->
+  <div id="card-modal" style="display: none;" class="modal">
+    <div class="modal-content">
+      <p id="card-modal-text"></p>
+      <div class="modal-buttons">
+        <button id="modal-use">사용하기</button>
+        <button id="modal-discard">버리기</button>
+        <button id="modal-cancel">취소</button>
+      </div>
+    </div>
+  </div>
+
   <button id="draw-btn" class="draw-btn">카드 뽑기</button>
 
   <script type="module" src="game.js"></script>

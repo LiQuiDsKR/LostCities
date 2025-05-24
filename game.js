@@ -1,6 +1,7 @@
 import { db, ref, get, set, update, onValue } from "./firebase-config.js";
 
 let lastDiscardColor = null;
+let selectedCardIndex = null;
 
 const colors = ['red', 'green', 'gray', 'blue', 'yellow'];
 const roomId = localStorage.getItem("roomId");
@@ -95,32 +96,62 @@ function calculateExpeditionScore(cards) {
 function playCard(index) {
   if (currentTurn !== playerId || hasPlayed) return;
 
+  selectedCardIndex = index;
   const card = hand[index];
-  const decision = confirm(`탐험로에 놓으려면 확인, 버리려면 취소`);
+  const modal = document.getElementById("card-modal");
+  const text = document.getElementById("card-modal-text");
+  text.textContent = `선택한 카드 : ${card.color.toUpperCase()} ${cardToText(card)}`;
+  modal.style.display = "flex";
+}
+
+// 모달 버튼 핸들러
+document.getElementById("modal-use").onclick = () => {
+  if (selectedCardIndex === null) return;
+  const card = hand[selectedCardIndex];
   const stack = expeditions[card.color];
   const last = stack.at(-1);
 
-  if (decision) {
-    if (card.value === 'INVEST' && stack.some(c => typeof c.value === 'number')) {
-      alert('숫자 카드 이후에는 투자카드 불가');
-      return;
-    }
-    if (last && typeof last.value === 'number' && card.value <= last.value) {
-      alert('오름차순만 가능');
-      return;
-    }
-    stack.push(card);
-    set(ref(db, `games/${roomId}/state/expeditions/${playerId}/${card.color}`), stack);
-  } else {
-    discardPiles[card.color].push(card);
-    set(ref(db, `games/${roomId}/state/discards/${card.color}`), discardPiles[card.color]);
-    lastDiscardColor = card.color;
+  if (card.value === 'INVEST' && stack.some(c => typeof c.value === 'number')) {
+    alert('숫자 카드 이후에는 투자카드 불가');
+    return closeModal();
+  }
+  if (last && typeof last.value === 'number' && card.value <= last.value) {
+    alert('오름차순만 가능');
+    return closeModal();
   }
 
-  hand.splice(index, 1);
+  stack.push(card);
+  set(ref(db, `games/${roomId}/state/expeditions/${playerId}/${card.color}`), stack);
+
+  finalizePlay(card);
+};
+
+document.getElementById("modal-discard").onclick = () => {
+  if (selectedCardIndex === null) return;
+  const card = hand[selectedCardIndex];
+  discardPiles[card.color].push(card);
+  set(ref(db, `games/${roomId}/state/discards/${card.color}`), discardPiles[card.color]);
+  lastDiscardColor = card.color;
+
+  finalizePlay(card);
+};
+
+document.getElementById("modal-cancel").onclick = () => {
+  closeModal();
+};
+
+function finalizePlay(card) {
+  hand.splice(selectedCardIndex, 1);
   set(ref(db, `games/${roomId}/state/hands/${playerId}`), hand);
   update(ref(db, `games/${roomId}/state`), { hasPlayed: true });
+  selectedCardIndex = null;
+  closeModal();
   checkEndTurn();
+}
+
+function closeModal() {
+  document.getElementById("card-modal").style.display = "none";
+  selectedCardIndex = null;
 }
 
 // 덱에서 카드 뽑기
@@ -157,6 +188,7 @@ function checkEndTurn() {
       hasPlayed: false,
       hasDrawn: false
     });
+    lastDiscardColor = null;
   }
 }
 
@@ -271,6 +303,20 @@ function startListening() {
 
     updateUI();
   });
+
+  onValue(ref(db, `games/${roomId}/players`), (snapshot) => {
+    const players = snapshot.val() || {};
+    const opponentId = playerId === 'player1' ? 'player2' : 'player1';
+
+    document.getElementById("my-name").textContent = `나: ${players[playerId]?.name || "나"}`;
+    document.getElementById("opponent-name").textContent = `상대: ${players[opponentId]?.name || "상대"}`;
+  });
+  onValue(ref(db, `games/${roomId}/state/deck`), (snapshot) => {
+  const deck = snapshot.val() || [];
+  const count = Array.isArray(deck) ? deck.length : Object.keys(deck).length;
+  document.getElementById("deck-count").textContent = `남은 카드: ${count}장`;
+});
+
 }
 
 startListening();

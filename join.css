@@ -58,3 +58,16 @@ button {
 button:hover {
   background-color: #560daa;
 }
+
+.version {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #d9adff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color:#511a81;
+  font-weight: bold;
+  z-index: 1000;
+}
