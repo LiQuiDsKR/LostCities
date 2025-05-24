@@ -1,6 +1,6 @@
 import { db, ref, get, set, update, onValue } from "./firebase-config.js";
 
-window.getHand = () => hand; // 디버깅용
+let lastDiscardColor = null;
 
 const colors = ['red', 'green', 'gray', 'blue', 'yellow'];
 const roomId = localStorage.getItem("roomId");
@@ -114,6 +114,7 @@ function playCard(index) {
   } else {
     discardPiles[card.color].push(card);
     set(ref(db, `games/${roomId}/state/discards/${card.color}`), discardPiles[card.color]);
+    lastDiscardColor = card.color;
   }
 
   hand.splice(index, 1);
@@ -164,6 +165,11 @@ async function drawFromDiscard(color) {
   
   if (!hasPlayed) {
     alert("먼저 카드를 내려놓아야 합니다!");
+    return;
+  }
+
+  if (lastDiscardColor === color) {
+    alert("방금 버린 카드는 곧바로 가져올 수 없습니다!");
     return;
   }
 
