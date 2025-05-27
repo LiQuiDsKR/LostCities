@@ -3,6 +3,8 @@ import { db, ref, get, set, update, onValue } from "./firebase-config.js";
 let lastDiscardColor = null;
 let selectedCardIndex = null;
 
+let lastUsed = null;
+
 const colors = ['red', 'green', 'gray', 'blue', 'yellow'];
 const roomId = localStorage.getItem("roomId");
 const playerId = localStorage.getItem("playerId");
@@ -48,8 +50,22 @@ function renderStack(containerId, stacks, isDiscard = false) {
     const cards = stacks[color] || [];
     if (cards.length > 0) {
       const displayCards = isDiscard ? [cards.at(-1)] : cards;
-      displayCards.forEach(card => {
+      displayCards.forEach((card, idx) => {
         const div = createCardDiv(card);
+
+        if (
+          lastUsed &&
+          card.color === lastUsed.color &&
+          card.value === lastUsed.value &&
+          (
+            (isDiscard && lastUsed.type === 'discard') ||
+            (!isDiscard && lastUsed.type === 'expedition')
+          ) &&
+          idx === displayCards.length - 1 // 마지막 카드만 하이라이트
+        ) {
+          div.classList.add("highlight");
+        }
+
         if (isDiscard) div.onclick = () => drawFromDiscard(color);
         stackDiv.appendChild(div);
       });
@@ -57,6 +73,7 @@ function renderStack(containerId, stacks, isDiscard = false) {
     container.appendChild(stackDiv);
   });
 }
+
 
 function renderScores(scoreContainerId, stacks) {
   const container = document.getElementById(scoreContainerId);
@@ -123,6 +140,11 @@ document.getElementById("modal-use").onclick = () => {
   stack.push(card);
   set(ref(db, `games/${roomId}/state/expeditions/${playerId}/${card.color}`), stack);
 
+  update(ref(db, `games/${roomId}/state`), {
+    hasPlayed: true,
+    lastUsed: { ...card, type: 'expedition' }
+  });
+
   finalizePlay(card);
 };
 
@@ -132,6 +154,11 @@ document.getElementById("modal-discard").onclick = () => {
   discardPiles[card.color].push(card);
   set(ref(db, `games/${roomId}/state/discards/${card.color}`), discardPiles[card.color]);
   lastDiscardColor = card.color;
+
+  update(ref(db, `games/${roomId}/state`), {
+    hasPlayed: true,
+    lastUsed: { ...card, type: 'discard' }
+  });
 
   finalizePlay(card);
 };
@@ -300,6 +327,9 @@ function startListening() {
     currentTurn = data.turn;
     hasPlayed  = data.hasPlayed  || false;
     hasDrawn   = data.hasDrawn   || false;
+
+    lastUsed = data.lastUsed || null;
+
 
     updateUI();
   });

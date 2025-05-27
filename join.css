@@ -2,41 +2,35 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Noto Sans KR', sans-serif;
-  background: #f5dfff;
+  background: url('res/login-bg.png') no-repeat center center fixed;
+  background-size: cover;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  body {
+    background: url("res/join-bg-mobile.png") no-repeat center center fixed;
+    background-size: cover;
+  }
+}
+
 .join-field {
+  height: 100%;
+  width: 400px;
   flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-}
-
-.container {
-  background-color: white;
-  padding: 40px 30px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  width: 320px;
-  text-align: center;
-}
-
-h2 {
-  margin-bottom: 24px;
-  font-size: 24px;
-  color: #000000;
 }
 
 input[type="text"] {
   width: 100%;
-  padding: 12px 10px;
-  margin: 10px 0;
-  font-size: 16px;
+  padding: 20px;
+  margin: 10px;
+  font-size: 30px;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
@@ -44,11 +38,11 @@ input[type="text"] {
 
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 16px;
-  background-color: #7b1ee5;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #9960da;
   color: white;
-  font-size: 16px;
+  font-size: 30px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -56,7 +50,7 @@ button {
 }
 
 button:hover {
-  background-color: #560daa;
+  background-color: #6731a5;
 }
 
 .version {

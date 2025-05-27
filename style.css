@@ -1,6 +1,7 @@
 body {
   font-family: sans-serif;
-  background: #ffffff;
+  background: url('res/login-bg.png') no-repeat center center fixed;
+  background-size: cover;
   text-align: center;
 }
 
@@ -20,7 +21,7 @@ h1 {
 .board-grid,
 .score-row {
   display: grid;
-  grid-template-columns: repeat(5, 80px);
+  grid-template-columns: repeat(5, 160px);
   gap: 10px;
   justify-content: center;
   margin-bottom: 15px;
@@ -42,11 +43,11 @@ h1 {
 }
 
 .player-area-card {
-  margin-top: 85px;
+  margin-top: 200px;
 }
 
 .opponent-area-card {
-  margin-top: 70px;
+  margin-top: 200px;
 }
 
 .opponent-area-card .card-stack {
@@ -54,7 +55,7 @@ h1 {
 }
 
 .card-stack .card {
-  margin-top: -60px;
+  margin-top: -160px;
   position: relative;
   z-index: 0;
 }
@@ -67,56 +68,155 @@ h1 {
   position: relative;
   font-weight: bold;
   display: flex;
+  color:#fff;
   justify-content: center;
+  background-size: cover;
+  background-position: center;
+  font-size: 16px;
   align-items: center;
-  width: 60px;
-  height: 90px;
-  border-radius: 8px;
-  background: white;
-  border: 2px solid black;
+  width: 160px;
+  height: 240px;
 }
 
 .card .corner {
   position: absolute;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
 }
 
 .card .corner.top-left {
-  top: 4px;
-  left: 6px;
+  width: 20px;
+  height: 20px;
+  top: 16px;
+  left: 22px;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .card .corner.bottom-right {
-  bottom: 4px;
-  right: 6px;
+  width: 20px;
+  height: 20px;
+  bottom: 15px;
+  right: 22px;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
   transform: rotate(180deg);
 }
 
-.card.red { border-color: red; color: red; }
-.card.green { border-color: green; color: green; }
-.card.gray { border-color: gray; color: gray; }
-.card.blue { border-color: blue; color: blue; }
-.card.yellow { border-color: goldenrod; color: goldenrod; }
+.card.highlight {
+  position: relative;
+}
+
+.card.highlight::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 150, 0.5); /* 90%는 너무 밝아 0.4~0.6 정도 추천 */
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.card.red {
+  background-image: url('res/card_red.png');
+}
+
+.card.green {
+  background-image: url('res/card_green.png');
+}
+
+.card.gray {
+  background-image: url('res/card_gray.png');
+}
+
+.card.blue {
+  background-image: url('res/card_blue.png');
+}
+
+.card.yellow {
+  background-image: url('res/card_yellow.png');
+}
 
 .card.invest {
   font-style: italic;
   background-color: #eee;
 }
 
-.card-stack.discard-zone {
-  background-color: #f0f0f0;
+.card-stack.red.discard-zone {
+  position: relative;
+  background-image: url('res/bg_red.png');
+  background-size: cover;
+  background-position: center;
   border-radius: 8px;
-  height: 100px;
+  height: 240px;
+  overflow: hidden;
+}
+.card-stack.green.discard-zone {
+  position: relative;
+  background-image: url('res/bg_green.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  height: 240px;
+  overflow: hidden;
+}
+.card-stack.gray.discard-zone {
+  position: relative;
+  background-image: url('res/bg_gray.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  height: 240px;
+  overflow: hidden;
+}
+.card-stack.blue.discard-zone {
+  position: relative;
+  background-image: url('res/bg_blue.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  height: 240px;
+  overflow: hidden;
+}
+.card-stack.yellow.discard-zone {
+  position: relative;
+  background-image: url('res/bg_yellow.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  height: 240px;
+  overflow: hidden;
 }
 
-.card-stack.red.discard-zone { background-color: #ffe5e5; }
-.card-stack.green.discard-zone { background-color: #e7ffe7; }
-.card-stack.gray.discard-zone { background-color: #eeeeee; }
-.card-stack.blue.discard-zone { background-color: #e5eeff; }
-.card-stack.yellow.discard-zone { background-color: #fff9d5; }
+.card-stack.discard-zone::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-stack.discard-zone .card {
+  position: relative;
+  z-index: 2;
+}
 
 .hand {
+  width:700px;
   display: flex;
   justify-content: center;
   gap: 8px;
