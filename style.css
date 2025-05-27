@@ -225,16 +225,20 @@ h1 {
 }
 
 .draw-btn {
-  background-color: #b166cf;
+  width: 30%;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #9960da;
   color: white;
-  padding: 10px 20px;
+  font-size: 30px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .draw-btn:hover {
-  background-color: #560daa;
+  background-color: #6731a5;
 }
 
 .draw-btn:disabled {

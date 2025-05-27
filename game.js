@@ -27,6 +27,11 @@ let discardPiles = Object.fromEntries(colors.map(c => [c, []]));
 const gameRef = ref(db, `games/${roomId}`);
 const stateRef = ref(db, `games/${roomId}/state`);
 
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  e.returnValue = "";
+});
+
 function cardToText(card) {
   return card.value === 'INVEST' ? '🤝' : card.value;
 }
