@@ -1,4 +1,5 @@
 import { db, ref, get, set, update, onValue } from "./firebase-config.js";
+import { extensionRules, canPlayCardWithExtensions, isRainbow11 } from "./extension.js";
 
 let lastDiscardColor = null;
 let selectedCardIndex = null;
@@ -13,6 +14,13 @@ let currentTurn = null;
 let hasPlayed = false;
 let hasDrawn = false;
 
+const modalRainbow11 = document.getElementById("rainbow11-modal");
+const rainbow11ColorList = document.getElementById("rainbow11-color-list");
+const rainbow11Cancel = document.getElementById("rainbow11-cancel");
+
+const modalDiscardRainbow = document.getElementById("modal-discard-rainbow");
+const discardRainbowColorList = document.getElementById("discard-rainbow-color-list");
+const discardRainbowCancel = document.getElementById("discard-rainbow-cancel");
 
 if (!roomId || !playerId) {
   alert("방 정보가 없습니다.");
@@ -130,15 +138,24 @@ function playCard(index) {
 document.getElementById("modal-use").onclick = () => {
   if (selectedCardIndex === null) return;
   const card = hand[selectedCardIndex];
+
+  if (isRainbow11(card)) {
+    showRainbow11Modal(card);
+    return;
+  }
   const stack = expeditions[card.color];
   const last = stack.at(-1);
 
   if (card.value === 'INVEST' && stack.some(c => typeof c.value === 'number')) {
-    alert('숫자 카드 이후에는 투자카드 불가');
+    alert('숫자 카드를 낸 이후에는 투자카드를 낼 수 없습니다.');
+    return closeModal();
+  }
+  if (!canPlayCardWithExtensions(stack, card, extensionRules)) {
+    alert('규칙 위반: 이 카드를 낼 수 없습니다.');
     return closeModal();
   }
   if (last && typeof last.value === 'number' && card.value <= last.value) {
-    alert('오름차순만 가능');
+    alert('이전에 낸 숫자보다 더 큰 숫자를 내야 합니다.');
     return closeModal();
   }
 
@@ -156,6 +173,13 @@ document.getElementById("modal-use").onclick = () => {
 document.getElementById("modal-discard").onclick = () => {
   if (selectedCardIndex === null) return;
   const card = hand[selectedCardIndex];
+
+  if (card.color === 'rainbow') {
+    showDiscardRainbowModal(card);
+    closeModal();
+    return;
+  }
+
   discardPiles[card.color].push(card);
   set(ref(db, `games/${roomId}/state/discards/${card.color}`), discardPiles[card.color]);
   lastDiscardColor = card.color;
@@ -180,11 +204,126 @@ function finalizePlay(card) {
   closeModal();
   checkEndTurn();
 }
-
+// 기본 카드 행동 모달 닫기
 function closeModal() {
   document.getElementById("card-modal").style.display = "none";
   selectedCardIndex = null;
 }
+
+// 무지개 11 카드 모달 표시
+function showRainbow11Modal(card) {
+  rainbow11ColorList.innerHTML = '';
+
+  const validColors = colors.filter(color => {
+    const stack = expeditions[color];
+    const lastCard = stack.at(-1);
+    return lastCard && lastCard.value === 10;
+  });
+
+  if (validColors.length === 0) {
+    alert("무지개 11 카드를 놓을 수 있는 10 카드가 없습니다.");
+    closeModal();
+    return;
+  }
+
+  validColors.forEach(color => {
+    const btn = document.createElement("button");
+    btn.textContent = color.toUpperCase();
+
+    switch(color) {
+      case 'red': btn.style.backgroundColor = '#ff4d4d'; break;
+      case 'green': btn.style.backgroundColor = '#4caf50'; break;
+      case 'gray': btn.style.backgroundColor = '#9e9e9e'; break;
+      case 'blue': btn.style.backgroundColor = '#2196f3'; break;
+      case 'yellow': btn.style.backgroundColor = '#ffeb3b'; break;
+      default: btn.style.backgroundColor = '#ccc';
+    }
+
+    btn.onclick = () => {
+      placeRainbow11(card, color);
+      modalRainbow11.style.display = "none";
+      closeModal();
+    };
+    rainbow11ColorList.appendChild(btn);
+  });
+
+  modalRainbow11.style.display = "flex";
+}
+
+// 무지개 11 카드 놓기 처리
+function placeRainbow11(card, color) {
+  expeditions[color].push(card);
+
+  set(ref(db, `games/${roomId}/state/expeditions/${playerId}/${color}`), expeditions[color]);
+
+  hand.splice(selectedCardIndex, 1);
+  set(ref(db, `games/${roomId}/state/hands/${playerId}`), hand);
+
+  update(ref(db, `games/${roomId}/state`), {
+    hasPlayed: true,
+    lastUsed: { ...card, type: 'expedition' }
+  });
+
+  selectedCardIndex = null;
+  checkEndTurn();
+}
+
+// 무지개 11 놓기 모달 닫기
+rainbow11Cancel.onclick = () => {
+  modalRainbow11.style.display = "none";
+  selectedCardIndex = null;
+  closeModal();
+};
+
+// 무지개 카드 버리기 모달 표시
+function showDiscardRainbowModal(card) {
+  discardRainbowColorList.innerHTML = '';
+
+  colors.forEach(color => {
+    const btn = document.createElement("button");
+    btn.textContent = color.toUpperCase();
+    switch(color) {
+      case 'red': btn.style.backgroundColor = '#ff4d4d'; break;
+      case 'green': btn.style.backgroundColor = '#4caf50'; break;
+      case 'gray': btn.style.backgroundColor = '#9e9e9e'; break;
+      case 'blue': btn.style.backgroundColor = '#2196f3'; break;
+      case 'yellow': btn.style.backgroundColor = '#ffeb3b'; break;
+      default: btn.style.backgroundColor = '#ccc';
+    }
+    btn.onclick = () => {
+      discardRainbowCardToColor(card, color);
+      modalDiscardRainbow.style.display = "none";
+    };
+    discardRainbowColorList.appendChild(btn);
+  });
+
+  modalDiscardRainbow.style.display = "flex";
+}
+
+// 무지개 카드 버리기 처리
+async function discardRainbowCardToColor(card, color) {
+  discardPiles[color].push(card);
+  await set(ref(db, `games/${roomId}/state/discards/${color}`), discardPiles[color]);
+
+  // 손패에서 카드 제거 및 상태 업데이트
+  const index = hand.findIndex(c => c.color === card.color && c.value === card.value);
+  if (index >= 0) {
+    hand.splice(index, 1);
+    await set(ref(db, `games/${roomId}/state/hands/${playerId}`), hand);
+  }
+
+  await update(ref(db, `games/${roomId}/state`), {
+    hasPlayed: true,
+    lastUsed: { ...card, type: 'discard' }
+  });
+
+  checkEndTurn();
+}
+
+// 무지개 카드 버리기 모달 닫기
+discardRainbowCancel.onclick = () => {
+  modalDiscardRainbow.style.display = "none";
+};
 
 // 덱에서 카드 뽑기
 document.getElementById('draw-btn').onclick = async () => {

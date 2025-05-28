@@ -65,3 +65,109 @@ button:hover {
   font-weight: bold;
   z-index: 1000;
 }
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  width:480px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.modal-content input[type="text"] {
+  font-size: 24px;
+  padding: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.modal-content label {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.modal-content button {
+  padding: 15px 0;
+  font-size: 20px;
+  margin: 5px 1%;
+  border-radius: 8px;
+}
+
+#room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#room-list > div {
+  background-color: #b3ffb3; /* 기본 배경 */
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.3s;
+}
+
+#room-list > div.disabled {
+  background-color: #ccc;
+  cursor: default;
+  pointer-events: none;
+}
+
+#room-list > div:hover:not(.disabled) {
+  background-color: #9fec9f;
+}
+
+.room-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.room-mode {
+  color: #4b7721;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.room-players {
+  margin-top: 8px;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.room-status {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 4px;
+}
+
+.room-date {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 6px;
+  text-align: right;
+}

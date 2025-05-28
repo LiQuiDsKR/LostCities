@@ -8,39 +8,38 @@
 <body>
   <div class="join-field">
     <img src="res/logo.png" alt="로고" class="logo">
-    <input type="text" id="room-id" placeholder="방 ID">
-    <input type="text" id="player-name" placeholder="닉네임">
-    <button id="join-btn">입장</button>
+      <input type="text" id="player-name" placeholder="닉네임" />
+    <button id="btn-create-room">방 만들기</button>
+    <button id="btn-join-room">방 참여하기</button>
   </div>
-  <div id="version", class="version">v0.0.4</div>
+  <!-- 방 만들기 모달 -->
+  <div id="modal-create-room" class="modal" style="display:none;">
+    <div class="modal-content">
+      <input type="text" id="create-room-name" placeholder="방 이름" />
+      <label>
+        <input type="checkbox" id="use-rainbow11" />
+        무지개 11 사용
+      </label>
+      <button id="create-room-submit">생성</button>
+      <button id="create-room-cancel">취소</button>
+    </div>
+  </div>
 
-  <script type="module">
-    import { joinRoom, initGameState } from "./room.js";
-    import { db, ref, get, set, update, onValue } from "./firebase-config.js";
+  <!-- 방 참여하기 모달 -->
+  <div id="modal-join-room" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 400px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3>방 목록</h3>
+        <button id="refresh-room-list" style="padding: 6px 12px; font-size: 14px; cursor: pointer;">새로고침</button>
+      </div>
+      <div id="room-list" style="max-height: 320px; overflow-y: auto;"></div>
+      <button id="join-room-cancel" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 16px;">취소</button>
+    </div>
+  </div>
 
-    document.getElementById("join-btn").onclick = async () => {
-      const roomId = document.getElementById("room-id").value.trim();
-      const playerName = document.getElementById("player-name").value.trim();
+  <div id="version", class="version">v0.0.5</div>
 
-      if (!roomId || !playerName) return alert("방 ID와 닉네임을 모두 입력하세요.");
+  <script type="module" src="join.js"></script>
 
-      const playerId = await joinRoom(roomId, playerName);
-      if (!playerId) return;
-
-      localStorage.setItem("roomId", roomId);
-      localStorage.setItem("playerId", playerId);
-
-      // 덱이 비어 있거나 undefined일 때만 초기화
-      if (playerId === "player1") {
-        const deckSnap = await get(ref(db, `games/${roomId}/state/deck`));
-        const deck = deckSnap.val();
-        if (!Array.isArray(deck) || deck.length === 0) {
-          await initGameState(roomId);
-        }
-      }
-
-      location.href = "game.html";
-    };
-  </script>
 </body>
 </html>

@@ -150,9 +150,12 @@ h1 {
   background-image: url('res/card_yellow.png');
 }
 
-.card.invest {
-  font-style: italic;
-  background-color: #eee;
+.card.yellow {
+  background-image: url('res/card_yellow.png');
+}
+
+.card.rainbow {
+  background-image: url('res/card_rainbow.png');
 }
 
 .card-stack.red.discard-zone {
@@ -287,7 +290,7 @@ h1 {
   gap: 10px;
 }
 
-.modal-buttons button {
+.modal-buttons button, .modal-cancelbtn {
   padding: 30px;
   font-size: 30px;
   border: none;
@@ -297,7 +300,7 @@ h1 {
   background-color: #eeeeee;
 }
 
-.modal-buttons button:hover {
+.modal-buttons button:hover, .modal-cancelbtn:hover {
   background-color: #e6c0ff;
 }
 
