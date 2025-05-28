@@ -90,7 +90,7 @@ export async function initGameState(roomId) {
 
   // useRainbow11 이 true일 때만 무지개 11 카드 3장 추가
   if (extRules.useRainbow11) {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       deck.push({ color: 'rainbow', value: 11 });
     }
   }
