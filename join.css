@@ -103,6 +103,7 @@ button:hover {
 }
 
 .modal-content button {
+  width: 20%;
   padding: 15px 0;
   font-size: 20px;
   margin: 5px 1%;
