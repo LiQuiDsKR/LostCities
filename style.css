@@ -311,47 +311,9 @@ h1 {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* 모바일: 줌 해제, 폰트 등 조정 */
-@media (max-width: 900px), (pointer: coarse) {
+/* 모바일: 줌 해제 */
+@media (max-width: 900px) {
   body {
     zoom: 1;
-    font-size: 24px;
-  }
-  .board-grid,
-  .score-row {
-    grid-template-columns: repeat(5, 90px);
-    gap: 4px;
-    margin-bottom: 24px;
-  }
-  .card, .hand .card {
-    width: 90px;
-    height: 135px;
-    font-size: 10px;
-  }
-  .card .corner.top-left,
-  .card .corner.bottom-right {
-    font-size: 12px;
-    left: 8px;
-    right: 8px;
-    top: 8px;
-    bottom: 8px;
-  }
-  .hand {
-    width: 95vw;
-    gap: 4px;
-    margin: 10px auto;
-  }
-  .draw-btn {
-    width: 80%;
-    padding: 10px;
-    font-size: 18px;
-  }
-  .modal-content {
-    padding: 20px;
-    min-width: 180px;
-  }
-  h1 {
-    margin-top: 10px;
-    font-size: 32px;
   }
 }
