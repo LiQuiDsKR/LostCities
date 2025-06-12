@@ -24,7 +24,7 @@ const discardRainbowCancel = document.getElementById("discard-rainbow-cancel");
 
 if (!roomId || !playerId) {
   alert("방 정보가 없습니다.");
-  location.href = "join.html";
+  location.href = "index.html";
 }
 
 let hand = [];
