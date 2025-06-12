@@ -8,12 +8,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  zoom: 0.5; /* PC: 50% 줌 */
 }
 
 @media (max-width: 768px) {
   body {
     background: url("res/join-bg-mobile.png") no-repeat center center fixed;
     background-size: cover;
+    zoom: 1; /* 모바일: 줌 해제 */
+    font-size: 16px; /* 모바일 폰트 크기 조정 */
   }
 }
 
@@ -26,6 +29,13 @@ body {
   align-items: center;
 }
 
+@media (max-width: 900px), (pointer: coarse) {
+  .join-field {
+    width: 95vw; /* 모바일에서의 너비 조정 */
+    min-width: 0;
+  }
+}
+
 input[type="text"] {
   width: 100%;
   padding: 20px;
@@ -34,6 +44,13 @@ input[type="text"] {
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  input[type="text"] {
+    font-size: 18px; /* 모바일에서의 폰트 크기 조정 */
+    padding: 10px; /* 모바일에서의 패딩 조정 */
+  }
 }
 
 button {
@@ -47,6 +64,13 @@ button {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  button {
+    font-size: 18px; /* 모바일에서의 폰트 크기 조정 */
+    padding: 10px; /* 모바일에서의 패딩 조정 */
+  }
 }
 
 button:hover {
@@ -84,6 +108,14 @@ button:hover {
   width:480px;
   max-width: 90%;
   text-align: center;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  .modal-content {
+    width: 95vw; /* 모바일에서의 모달 너비 조정 */
+    padding: 10px; /* 모바일에서의 모달 패딩 조정 */
+    font-size: 14px; /* 모바일에서의 모달 폰트 크기 조정 */
+  }
 }
 
 .modal-content input[type="text"] {

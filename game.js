@@ -35,6 +35,13 @@ let discardPiles = Object.fromEntries(colors.map(c => [c, []]));
 const gameRef = ref(db, `games/${roomId}`);
 const stateRef = ref(db, `games/${roomId}/state`);
 
+// 효과음 오디오 객체
+const turnEndAudio = new Audio('res/turnEnd.mp3');
+turnEndAudio.volume = 0.5;
+const gameFinishAudio = new Audio('res/gameFinish.mp3');
+gameFinishAudio.volume = 0.5;
+let gameFinished = false;
+
 window.addEventListener("beforeunload", function (e) {
   e.preventDefault();
   e.returnValue = "";
@@ -363,6 +370,54 @@ function checkEndTurn() {
   }
 }
 
+// 게임 종료 모달 표시 함수
+function showGameFinishModal(myScore, opponentScore) {
+  // 플레이어 이름 가져오기
+  const myName = document.getElementById("my-name").textContent || "나";
+  const opponentName = document.getElementById("opponent-name").textContent || "상대";
+
+  // 승패 메시지 결정
+  let resultMsg = "";
+  if (myScore > opponentScore) resultMsg = `${myName} 승리!`;
+  else if (myScore < opponentScore) resultMsg = `${opponentName} 승리!`;
+  else resultMsg = "무승부";
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-finish';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100vw';
+  modal.style.height = '100vh';
+  modal.style.background = 'rgba(0,0,0,0.7)';
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  modal.style.justifyContent = 'center';
+  modal.style.alignItems = 'center';
+  modal.style.zIndex = '9999';
+  modal.innerHTML = `
+    <div style="background:#fff; padding:32px 48px; border-radius:16px; min-width:300px; text-align:center;">
+      <h2>게임 종료</h2>
+      <div style="margin:16px 0;">
+        <div style="color: darkred;">
+          <b>${myName}:</b> ${myScore}<br>
+        </div>
+        <div style="color: darkblue;">
+          <b>${opponentName}:</b> ${opponentScore}
+        </div>
+        <div style="margin-top:24px; font-size:2em; font-weight:bold;">${resultMsg}</div>
+      </div>
+      <button id="finish-ok-btn" style="margin-top:50px; padding: 30px;font-size: 30px; margin-top: 16px; border: none;
+      border-radius: 10px; cursor: pointer; font-weight: bold; background-color: #eeeeee;">확인</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById('finish-ok-btn').onclick = () => {
+    modal.remove();
+    location.href = 'index.html';
+  };
+}
+
 async function drawFromDiscard(color) {
   if (currentTurn !== playerId || hasDrawn) return;
   
@@ -471,9 +526,33 @@ function startListening() {
     currentTurn = data.turn;
     hasPlayed  = data.hasPlayed  || false;
     hasDrawn   = data.hasDrawn   || false;
-
     lastUsed = data.lastUsed || null;
 
+    // 턴 종료 효과음: 내 턴이 끝나고 상대 턴으로 넘어갈 때(모든 플레이어에게)
+    // 마지막 카드 뽑아 게임 종료 시에는 효과음 재생하지 않음
+    const deckArr = data.deck || [];
+    const deckEmpty = Array.isArray(deckArr) ? deckArr.length === 0 : Object.keys(deckArr).length === 0;
+    const bothHandsEmpty =
+      (!data.hands?.player1 || data.hands.player1.length === 0) &&
+      (!data.hands?.player2 || data.hands.player2.length === 0);
+
+    // 게임 종료 감지: 덱이 비었고, hasPlayed/hasDrawn 모두 true(턴 종료 후)
+    if (!gameFinished && deckEmpty && hasPlayed && hasDrawn) {
+      gameFinished = true;
+      // 점수 계산
+      const myScore = colors.reduce((sum, color) => sum + calculateExpeditionScore(expeditions[color]), 0);
+      const opponentScore = colors.reduce((sum, color) => sum + calculateExpeditionScore(opponentExpeditions[color]), 0);
+      gameFinishAudio.currentTime = 0;
+      gameFinishAudio.play();
+      showGameFinishModal(myScore, opponentScore);
+    } else {
+      // 게임 종료가 아닌 경우에만 턴 종료 효과음 재생
+      if (typeof window._lastTurn !== 'undefined' && window._lastTurn !== currentTurn) {
+        turnEndAudio.currentTime = 0;
+        turnEndAudio.play();
+      }
+    }
+    window._lastTurn = currentTurn;
 
     updateUI();
   });
@@ -482,8 +561,8 @@ function startListening() {
     const players = snapshot.val() || {};
     const opponentId = playerId === 'player1' ? 'player2' : 'player1';
 
-    document.getElementById("my-name").textContent = `나: ${players[playerId]?.name || "나"}`;
-    document.getElementById("opponent-name").textContent = `상대: ${players[opponentId]?.name || "상대"}`;
+    document.getElementById("my-name").textContent = `${players[playerId]?.name || "나"}`;
+    document.getElementById("opponent-name").textContent = `${players[opponentId]?.name || "상대"}`;
   });
   onValue(ref(db, `games/${roomId}/state/deck`), (snapshot) => {
   const deck = snapshot.val() || [];
