@@ -8,15 +8,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  zoom: 0.5; /* PC: 50% 줌 */
-}
-
-@media (max-width: 768px) {
-  body {
-    background: url("res/join-bg-mobile.png") no-repeat center center fixed;
-    background-size: cover;
-    zoom: 1; /* 모바일: 줌 해제 */
-  }
 }
 
 .join-field {

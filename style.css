@@ -4,7 +4,6 @@ body {
   background-size: cover;
   font-size: 48px;
   text-align: center;
-  zoom: 0.5;
 }
 
 h1 {
@@ -309,11 +308,4 @@ h1 {
 @keyframes scaleUp {
   from { transform: scale(0.95); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
-}
-
-/* 모바일: 줌 해제 */
-@media (max-width: 768px) {
-  body {
-    zoom: 1;
-  }
 }
