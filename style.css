@@ -312,7 +312,7 @@ h1 {
 }
 
 /* 모바일: 줌 해제 */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   body {
     zoom: 1;
   }
