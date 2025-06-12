@@ -4,6 +4,7 @@ body {
   background-size: cover;
   font-size: 48px;
   text-align: center;
+  zoom: 0.7;
 }
 
 h1 {
