@@ -98,9 +98,28 @@ async function loadRoomList() {
   roomListDiv.innerHTML = "";
 
   Object.entries(games).forEach(([roomId, roomData]) => {
+    const createdAtTimestamp = roomData.players?.player1?.joinedAt;
+    if (!createdAtTimestamp) return; // 생성일 없으면 표시 안 함
+    const now = Date.now();
+    const ONE_HOUR = 60 * 60 * 1000;
+    const SIX_HOUR = 6 * ONE_HOUR;
+
     const players = roomData.players || {};
     const player1Exists = !!players.player1;
     const player2Exists = !!players.player2;
+    const deck = roomData.state?.deck;
+
+    // 상태 판별
+    let statusText = "대기 중";
+    if (player1Exists && player2Exists) {
+      if (deck && deck.length > 0) statusText = "게임 중";
+      else statusText = "게임 종료";
+    }
+
+    // 상태별 표시 조건
+    if (statusText === "대기 중" && now - createdAtTimestamp > SIX_HOUR) return;
+    if (statusText === "게임 중" && now - createdAtTimestamp > ONE_HOUR) return;
+    if (statusText === "게임 종료") return;
 
     const roomDiv = document.createElement("div");
     roomDiv.className = "modal-content";
@@ -138,17 +157,10 @@ async function loadRoomList() {
     // 상태
     const statusDiv = document.createElement("div");
     statusDiv.className = "room-status";
-    let statusText = "대기 중";
-    const deck = roomData.state?.deck;
-    if (player1Exists && player2Exists) {
-      if (deck && deck.length > 0) statusText = "게임 중";
-      else statusText = "게임 종료";
-    }
     statusDiv.textContent = `상태: ${statusText}`;
     roomDiv.appendChild(statusDiv);
 
     // 개설 날짜
-    const createdAtTimestamp = roomData.players?.player1?.joinedAt;
     if (createdAtTimestamp) {
       const date = new Date(createdAtTimestamp);
       const dateStr = date.toLocaleString();
